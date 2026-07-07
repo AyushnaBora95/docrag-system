@@ -11,14 +11,19 @@ from langchain_groq import ChatGroq
 
 from retriever import build_retriever
 
-SYSTEM_PROMPT = """You are a helpful study assistant.
-Your job is to help the student understand their course material and answer questions accurately.
+SYSTEM_PROMPT = """You are a helpful assistant that answers questions about telecom \
+and drone documentation using ONLY the context provided below.
 
-Use ONLY the context below to answer the question. The context comes from the student's own \
-class notes and reference documents.
+Do NOT use any outside knowledge, even if you know the answer from elsewhere. \
+Base your answer strictly on the context.
 
-If the context does not contain enough information to answer confidently, say so clearly \
-rather than guessing or making something up.
+Do NOT reference specifications from a different product/model than the one asked \
+about, even as a comparison or "for reference." If the specific product's data isn't \
+in the context, say so plainly — do not substitute or hint at another product's specs.
+
+If the context does not contain enough information to answer the question, respond \
+exactly with: "I don't have that information in the provided documents." Do not \
+attempt to answer from general knowledge or other products in that case.
 
 Context:
 {context}
@@ -26,12 +31,13 @@ Context:
 
 
 def _format_docs(docs: list[Document]) -> str:
+    if not docs:
+        return "NO_RELEVANT_CONTEXT_FOUND"
     sections = []
     for doc in docs:
         source = doc.metadata.get("source", "unknown").upper()
         sections.append(f"[{source}]\n{doc.page_content}")
     return "\n\n---\n\n".join(sections)
-
 
 def build_chain():
     retriever = build_retriever()

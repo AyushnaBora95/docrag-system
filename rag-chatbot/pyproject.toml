@@ -18,4 +18,8 @@ dependencies = [
     "pypdf",
     "langchain-community",
     "langchain-text-splitters",
+    "langchain-experimental>=0.4.2",
+    "rank-bm25>=0.2.2",
+    "unstructured[pdf]>=0.23.1",
+    "unstructured-inference>=1.6.13",
 ]
